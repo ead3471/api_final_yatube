@@ -1,9 +1,9 @@
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
-from posts.models import Post, Group, Follow
-from .serializers import PostSerializer, GroupSerializer, FollowSerializer
-from .permissions import IsOwnerOrReadOnly
+from posts.models import Post, Group, Follow, Comment
+from .serializers import PostSerializer, GroupSerializer, FollowSerializer, CommentSerializer
+from .permissions import IsOwnerOrReadOnly, IsOwner
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework import status
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
@@ -27,8 +27,11 @@ class GroupVievSet(ReadOnlyModelViewSet):
 
 class FollowViewSet(ModelViewSet):
     serializer_class = FollowSerializer
-    permission_classes = (IsAuthenticated,)
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,)
+    permission_classes = (IsAuthenticated, IsOwner,)
+
+    def get_queryset(self):
+        return Follow.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer: FollowSerializer):
         serializer.save(user=self.request.user)
@@ -49,6 +52,14 @@ class FollowViewSet(ModelViewSet):
 
     search_fields = ('following__username',)
 
-    # TODO:SelfFollow restriction
+
+class CommentViewSet(ModelViewSet):
+    serializer_class = CommentSerializer
+    permission_classes = (IsOwnerOrReadOnly,)
+
     def get_queryset(self):
-        return Follow.objects.filter(user=self.request.user)
+        post_id = self.kwargs['post_id']
+        return Comment.objects.filter(post=post_id).all()
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
