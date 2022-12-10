@@ -11,6 +11,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from rest_framework.mixins import (CreateModelMixin, RetrieveModelMixin,
+                                   ListModelMixin, DestroyModelMixin)
+from rest_framework.viewsets import GenericViewSet
 
 
 class PostViewSet(ModelViewSet):
@@ -28,32 +31,20 @@ class GroupVievSet(ReadOnlyModelViewSet):
     serializer_class = GroupSerializer
 
 
-class FollowViewSet(ModelViewSet):
+class FollowViewSet(CreateModelMixin,
+                    ListModelMixin,
+                    RetrieveModelMixin,
+                    GenericViewSet):
     serializer_class = FollowSerializer
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,)
     permission_classes = (IsAuthenticated,)
+    search_fields = ('following__username',)
 
     def get_queryset(self):
         return Follow.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer: FollowSerializer):
         serializer.save(user=self.request.user)
-
-    def create(self, request, *args, **kwargs):
-        if request.user.username == request.data.get('following'):
-            return Response("Subscribe to yourself is prohbited!",
-                            status=status.HTTP_400_BAD_REQUEST)
-
-        if (Follow.
-            objects.
-            filter(user=request.user).
-            filter(following__username=request.data.get('following')).
-                exists()):
-            return Response("Follow already exists!",
-                            status=status.HTTP_400_BAD_REQUEST)
-        return super().create(request, *args, **kwargs)
-
-    search_fields = ('following__username',)
 
 
 class CommentViewSet(ModelViewSet):

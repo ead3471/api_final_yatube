@@ -6,6 +6,7 @@ import base64
 from django.core.files.base import ContentFile
 from django.contrib.auth import get_user_model
 from posts.models import Comment, Post, Group, Follow
+from rest_framework.serializers import ValidationError
 
 User = get_user_model()
 
@@ -53,3 +54,15 @@ class FollowSerializer(ModelSerializer):
     class Meta:
         model = Follow
         fields = '__all__'
+
+    def validate_following(self, following: User):
+        user: User = self.context.get('request').user
+        if user == following:
+            raise ValidationError("Subscribe to yourself is prohbited!")
+
+        if (Follow.
+            objects.
+            filter(user=user).
+                filter(following=following).exists()):
+            raise ValidationError("Follow already exists!")
+        return following
