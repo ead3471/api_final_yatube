@@ -7,12 +7,11 @@ from .serializers import (PostSerializer,
 from .permissions import IsOwnerOrReadOnly
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import status
-from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from rest_framework.mixins import (CreateModelMixin, RetrieveModelMixin,
-                                   ListModelMixin, DestroyModelMixin)
+from rest_framework.mixins import (CreateModelMixin,
+                                   RetrieveModelMixin,
+                                   ListModelMixin)
 from rest_framework.viewsets import GenericViewSet
 
 
