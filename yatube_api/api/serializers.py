@@ -1,13 +1,10 @@
 from rest_framework.serializers import (ModelSerializer,
                                         ImageField,
-                                        SlugRelatedField,
-                                        ValidationError)
+                                        SlugRelatedField)
 from rest_framework.relations import SlugRelatedField
 import base64
 from django.core.files.base import ContentFile
-
 from django.contrib.auth import get_user_model
-
 from posts.models import Comment, Post, Group, Follow
 
 User = get_user_model()

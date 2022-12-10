@@ -1,9 +1,12 @@
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from posts.models import Post, Group, Follow, Comment
-from .serializers import PostSerializer, GroupSerializer, FollowSerializer, CommentSerializer
-from .permissions import IsOwnerOrReadOnly, IsOwner
+from .serializers import (PostSerializer,
+                          GroupSerializer,
+                          FollowSerializer,
+                          CommentSerializer)
+from .permissions import IsOwnerOrReadOnly
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
+from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
@@ -28,7 +31,7 @@ class GroupVievSet(ReadOnlyModelViewSet):
 class FollowViewSet(ModelViewSet):
     serializer_class = FollowSerializer
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,)
-    permission_classes = (IsAuthenticated, IsOwner,)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return Follow.objects.filter(user=self.request.user)
