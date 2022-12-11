@@ -32,7 +32,6 @@ class GroupVievSet(ReadOnlyModelViewSet):
 
 class FollowViewSet(CreateModelMixin,
                     ListModelMixin,
-                    RetrieveModelMixin,
                     GenericViewSet):
     serializer_class = FollowSerializer
     filter_backends = (DjangoFilterBackend, filters.SearchFilter,)
