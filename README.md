@@ -1,6 +1,6 @@
 
 # Yatube
-## This is a Yatube project - little social network. Project goal is to explore the possibilities of the Django REST framework.<br>
+## This is a Yatube project - small social network. The goal of the project is to explore the capabilities of the Django REST framework.<br>
 Implemented API functionality for a small social network.<br>
 Users can:
  - register
